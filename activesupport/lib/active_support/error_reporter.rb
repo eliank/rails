@@ -238,12 +238,14 @@ module ActiveSupport
         end
       end
 
+      err_counter = 0
       while error
         unless error.frozen?
           error.instance_variable_set(:@__rails_error_reported, true)
         end
 
-        raise "Recursion detected on: #{error.class.name}, backtrace: #{error.backtrace}" if error == error.cause
+        err_counter += 1
+        raise "Recursion detected on: #{error.class.name}, backtrace: #{error.backtrace}" if err_counter > 128
 
         error = error.cause
       end
